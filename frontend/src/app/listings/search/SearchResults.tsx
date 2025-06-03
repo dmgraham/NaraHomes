@@ -7,7 +7,6 @@ interface PropertyListingSearchResults {
   count: number;
   data: PropertyListing[];
 }
-export const dynamic = "force-dynamic";
 
 async function fetchProperties(searchParams: {
   [key: string]: string | string[] | undefined;

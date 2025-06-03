@@ -2,7 +2,6 @@ import PropertyDetailsClient from "./PropertyDetailsClient";
 import { PropertyListing } from "@/types/PropertyListing";
 
 async function fetchPropertyById(id: string): Promise<PropertyListing> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
   const response = await fetch(`http://localhost:3000/api/listings/${id}`, {
     cache: "force-cache",
     next: { revalidate: 60 * 60 },

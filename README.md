@@ -39,17 +39,20 @@ and not a range
 **Screenshots**
 
 
-Featured Listings /Home
+* Featured Listings /Home
 
 ![image](https://github.com/user-attachments/assets/3627d7e7-3b02-4ce9-953f-38f366f7c0ac)
 
 
-Details Page
+* Details Page
 
 ![image](https://github.com/user-attachments/assets/19be8d92-6780-4970-842e-2933a908a5b5)
 
+![image](https://github.com/user-attachments/assets/43ecfc89-7ae7-461a-8f60-402824cbf272)
 
-Search bar
+
+
+* Search bar
 
 ![image](https://github.com/user-attachments/assets/c087b62c-33e0-4758-8966-795216b5bf28)
 

@@ -1,6 +1,7 @@
 # NaraHomes
 
-** (1) Instructions To Run**
+**(1) Instructions To Run**
+
 
 1. Open the backend folder in the root of the project. Open the "Backend.sln" with visual studio. Requires Visual studio and .NET 8 Core installed.
 2. Run the project in visual studio in **HTTP MODE **selected in the drop down menu in visual studio when running the project.
@@ -36,6 +37,7 @@ and not a range
 
 
 **Screenshots**
+
 
 Featured Listings /Home
 

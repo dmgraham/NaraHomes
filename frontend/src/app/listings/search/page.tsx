@@ -1,13 +1,12 @@
-import { Suspense } from "react";
-import PropertySearch from "./PropertySearch";
+"use client";
+
+import { Suspense, useState } from "react";
+import PropertySearchBar from "./PropertySearchBar";
 import PropertyResultsLoading from "./PropertyResultsLoading";
 import SearchResults from "./SearchResults";
 
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+export default function SearchPage() {
+  const [searchUrl, setSearchUrl] = useState("");
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="text-center space-y-2">
@@ -17,10 +16,8 @@ export default async function SearchPage({
         </p>
       </div>
 
-      <PropertySearch />
-      <Suspense fallback={<PropertyResultsLoading />}>
-        <SearchResults searchParams={searchParams} />
-      </Suspense>
+      <PropertySearchBar setSearchUrl={setSearchUrl} />
+      <SearchResults searchUrlParams={searchUrl} />
     </div>
   );
 }

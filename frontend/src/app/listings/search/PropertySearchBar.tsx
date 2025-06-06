@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -14,53 +13,39 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, RotateCcw } from "lucide-react";
+import { useQueryState, parseAsInteger, parseAsArrayOf } from "nuqs";
 
-export default function PropertySearch() {
+export default function PropertySearchBar({
+  setSearchUrl,
+}: {
+  setSearchUrl: (url: string) => void;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   // State for form values
-  const [minPrice, setMinPrice] = useState([0]);
-  const [maxPrice, setMaxPrice] = useState([2000000]);
-  const [bedrooms, setBedrooms] = useState<string>("any");
-  const [bathrooms, setBathrooms] = useState<string>("any");
-  const [minSqft, setMinSqft] = useState([500]);
-  const [maxSqft, setMaxSqft] = useState([5000]);
-
-  // Initialize form values from URL params
-  useEffect(() => {
-    const minPriceParam = searchParams.get("minPrice");
-    const maxPriceParam = searchParams.get("maxPrice");
-    const bedroomsParam = searchParams.get("bedrooms");
-    const bathroomsParam = searchParams.get("bathrooms");
-    const minSqftParam = searchParams.get("minSqft");
-    const maxSqftParam = searchParams.get("maxSqft");
-
-    if (minPriceParam) setMinPrice([Number.parseInt(minPriceParam)]);
-    if (maxPriceParam) setMaxPrice([Number.parseInt(maxPriceParam)]);
-    if (bedroomsParam) setBedrooms(bedroomsParam);
-    if (bathroomsParam) setBathrooms(bathroomsParam);
-    if (minSqftParam) setMinSqft([Number.parseInt(minSqftParam)]);
-    if (maxSqftParam) setMaxSqft([Number.parseInt(maxSqftParam)]);
-  }, [searchParams]);
-
-  // Create query string helper
-  const createQueryString = useCallback(
-    (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
-
-      Object.entries(updates).forEach(([key, value]) => {
-        if (value === null || value === "" || value === "0") {
-          params.delete(key);
-        } else {
-          params.set(key, value);
-        }
-      });
-
-      return params.toString();
-    },
-    [searchParams]
+  const [minPrice, setMinPrice] = useQueryState(
+    "minPrice",
+    parseAsArrayOf(parseAsInteger).withDefault([0])
+  );
+  const [maxPrice, setMaxPrice] = useQueryState(
+    "maxPrice",
+    parseAsArrayOf(parseAsInteger).withDefault([2000000])
+  );
+  const [bedrooms, setBedrooms] = useQueryState("bedrooms", {
+    defaultValue: "any",
+  });
+  const [bathrooms, setBathrooms] = useQueryState("bathrooms", {
+    defaultValue: "any",
+  });
+  const [minSqft, setMinSqft] = useQueryState(
+    "minSqft",
+    parseAsArrayOf(parseAsInteger).withDefault([500])
+  );
+  const [maxSqft, setMaxSqft] = useQueryState(
+    "maxSqft",
+    parseAsArrayOf(parseAsInteger).withDefault([5000])
   );
 
   // Handle search submission
@@ -74,8 +59,21 @@ export default function PropertySearch() {
       maxSqft: maxSqft[0] < 5000 ? maxSqft[0].toString() : null,
     };
 
-    const queryString = createQueryString(updates);
-    router.push(pathname + (queryString ? "?" + queryString : ""));
+    const params = new URLSearchParams(searchParams.toString());
+
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null || value === "" || value === "0") {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    });
+
+    const queryString = params.toString();
+    router.push(pathname + (queryString ? "?" + queryString : ""), {
+      scroll: false, // Prevent scrolling to top on search
+    });
+    setSearchUrl(queryString);
   };
 
   // Handle reset
@@ -86,7 +84,7 @@ export default function PropertySearch() {
     setBathrooms("any");
     setMinSqft([500]);
     setMaxSqft([5000]);
-    router.push(pathname);
+    router.replace(pathname);
   };
 
   // Format price for display

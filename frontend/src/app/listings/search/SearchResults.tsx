@@ -1,51 +1,74 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { PropertyListing } from "@/types/PropertyListing";
 import { PropertyCard } from "@/components/PropertyCard";
 import { Card } from "@/components/ui/card";
 import { Home } from "lucide-react";
+import PropertyResultsLoading from "./PropertyResultsLoading";
 
 interface PropertyListingSearchResults {
   count: number;
   data: PropertyListing[];
 }
 
-async function fetchProperties(searchParams: {
-  [key: string]: string | string[] | undefined;
-}): Promise<PropertyListingSearchResults> {
-  const baseUrl = "http://localhost:3000/api/listings/search";
-
-  if (!searchParams || Object.keys(searchParams).length === 0) {
-    const emptysearchResponse = await fetch(baseUrl);
-    return emptysearchResponse.json();
-  }
-
-  const queryString = new URLSearchParams(searchParams).toString();
-  const url = `${baseUrl}?${queryString}`;
-
-  const response = await fetch(url, { cache: "no-store" });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch properties");
-  }
-  return response.json();
-}
-
-export default async function PropertyResults({
-  searchParams,
+export default function PropertyResults({
+  searchUrlParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchUrlParams: string;
 }) {
-  const params = await searchParams;
-  const data = await fetchProperties(params);
+  const [data, setData] = useState<PropertyListingSearchResults | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const fetchProperties = async () => {
+      try {
+        setData(null);
+
+        const baseUrl = "http://localhost:3000/api/listings/search?";
+        const url = `${baseUrl}${searchUrlParams}`;
+        const response = await fetch(url, {
+          cache: "no-store",
+          signal,
+        });
+
+        if (!response.ok) {
+          setData({ count: 0, data: [] }); // Fallback
+        }
+
+        const responseDataJson = await response.json();
+        setData(responseDataJson);
+      } catch (error) {
+        if ((error as any).name === "AbortError") {
+          // Request was aborted
+          return;
+        }
+        console.error("Error fetching properties:", error);
+        setData({ count: 0, data: [] }); // Fallback
+      }
+    };
+
+    fetchProperties();
+
+    return () => {
+      controller.abort();
+    };
+  }, [searchUrlParams]);
+
+  if (!data) return <PropertyResultsLoading />;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Search Results</h2>
         <div className="text-muted-foreground">
-          {data?.count ?? 0} properties found
+          {data.count ?? 0} properties found
         </div>
       </div>
 
-      {data?.data?.length > 0 ? (
+      {data.data?.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.data.map((property: PropertyListing) => (
             <PropertyCard key={property.propertyId} {...property} />

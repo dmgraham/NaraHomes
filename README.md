@@ -54,7 +54,12 @@ and not a range
 
 * Search bar
 
-![image](https://github.com/user-attachments/assets/c087b62c-33e0-4758-8966-795216b5bf28)
+![image](https://github.com/user-attachments/assets/decdb54e-1d54-492d-964a-7c33e1a57849)
+
+~mobile Version
+
+![image](https://github.com/user-attachments/assets/e223e39b-4010-4158-81d9-434fb30b12e9)
 
 
+![image](https://github.com/user-attachments/assets/710ffd24-6eee-44fd-83f4-f1f2b27d7bae)
 

@@ -36,6 +36,7 @@ export default function PropertyResults({
 
         if (!response.ok) {
           setData({ count: 0, data: [] }); // Fallback
+          return;
         }
 
         const responseDataJson = await response.json();

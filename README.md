@@ -17,7 +17,7 @@ FrontEnd : React/Next.js/Tailwind CSS / ShadCN
 
 BackEnd : C#, .NET
 
-State Management: React useState and the URL bar.
+State Management: URL Bar and Nuqs plus useState.
 
 Database: Memory
 
